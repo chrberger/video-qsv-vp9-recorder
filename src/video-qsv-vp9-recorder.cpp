@@ -245,7 +245,7 @@ int32_t main(int32_t argc, char **argv) {
                     inBuffer.size = WIDTH * HEIGHT * 3/2; // I420 is W*H*3/2
                     inBuffer.handle = reinterpret_cast<intptr_t>(reinterpret_cast<uint8_t*>(sharedMemory->data()));
                     inBuffer.width = WIDTH;
-                    inBuffer.height = WIDTH;
+                    inBuffer.height = HEIGHT;
                     inBuffer.pitch[0] = WIDTH;   // Y
                     inBuffer.pitch[1] = WIDTH/2; // U
                     inBuffer.pitch[2] = WIDTH/2; // V
@@ -258,8 +258,8 @@ int32_t main(int32_t argc, char **argv) {
                     inBuffer.flags = VIDEO_FRAME_FLAGS_KEY;
                 }
 
-                // Reserve RGB-sized buffer per frame that should be large enough to hold a lossy-encoded h264 frame.
-                const uint32_t INTERNAL_BUFFER_SIZE{WIDTH * HEIGHT * 3};
+                // Reserve buffer per frame that should be large enough to hold a lossy-encoded h264 frame.
+                const uint32_t INTERNAL_BUFFER_SIZE{5*1000*1000};
                 uint8_t internalBuffer[INTERNAL_BUFFER_SIZE];
                 VideoEncOutputBuffer outBuffer;
                 {
@@ -295,6 +295,7 @@ int32_t main(int32_t argc, char **argv) {
                             }
 
                             retVal = encodeEncodeRawData(encodeHandler, &inBuffer);
+
                             if (YAMI_SUCCESS != retVal) {
                                 std::cerr << "[video-qsv-vp9-recorder]: Error encoding frame: " << retVal << std::endl;
                             }
